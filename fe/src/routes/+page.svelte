@@ -49,10 +49,11 @@
 		用户名: <input class="input" bind:value={name} type="text" />
 	</div>
 	<div>
-		密码: <input class="input" bind:value={pwd} type="password" />
+		密码:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={pwd} type="password" />
 	</div>
+	<a href="\register">还没账号?点我注册</a>
 	<div>
-		<button class="button is-primary" onclick={login}>登录</button>
+		<button class="button is-primary" disabled={name.trim() === '' || pwd.trim() === ''} onclick={login}>登录</button>
 	</div>
 </div>
 
@@ -73,5 +74,11 @@
 		div {
 			padding: 1em;
 		}
+	}
+
+	a{
+		margin-left: 150px;
+		font-size: 13px;
+		color: red;
 	}
 </style>

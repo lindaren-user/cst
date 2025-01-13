@@ -1,4 +1,4 @@
-module spider
+module spider // module spider 这行声明了该 Go 项目的模块名为 spider，即该项目的根目录或包名称
 
 go 1.23.4 // 表示使用 Go 1.18 或更高版本
 
