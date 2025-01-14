@@ -1,12 +1,54 @@
 <script>
   import { user } from '../../stores/user'
+  import { Notyf } from 'notyf';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
+  let notyf;
+
+  let logout = () => {
+    user.set(null);
+
+    fetch('/api/logout')
+      .then((v) => {
+        if (!v.ok){
+          console.log(v);
+          return v;
+        }
+
+        return v.json();
+      })
+      .then((v) => {
+        if(v && v.status !== 0){
+          notyf.error("退出错误");
+          return;
+        }
+
+        notyf.success("退出成功");
+        goto("/");
+      })
+      .catch((e) => {
+				console.log(e);
+				if (e.message) {
+					notyf.error(e.message);
+				}
+			});
+  }
+
+  onMount(() => {
+		notyf = new Notyf({
+			duration: 3000,
+			className: 'x-notification',
+			position: { x: 'right', y: 'top' }
+		});
+	});
 </script>
 
 <div class="navbar">
   <a href="/home" class="navbar-item">首页</a>
   <a href="/home/blogs" class="navbar-item">我的博客</a>
   <p class="navbar-account">你好！{$user}</p>
-  <a href="/" class="navbar-item navbar-logout">退出登录</a>
+  <a href="#" class="navbar-item navbar-logout" on:click={logout}>退出登录</a>
 </div>  
 
 <div class="main">

@@ -1,8 +1,8 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { user } from '../stores/user';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
-	import { user } from '../stores/user'
 
 	let notyf;
 
@@ -10,6 +10,7 @@
 	let pwd = $state('');
 
 	let login = (e) => {
+		console.log(notyf)
 		fetch(`/api/login?name=${account}&pwd=${pwd}`)
 			.then((v) => {
 				if (!v.ok) {

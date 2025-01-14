@@ -10,6 +10,7 @@ func main() {
 	// 注册路由
 	http.HandleFunc("/api/login", handlers.LoginHandler)
 	http.HandleFunc("/api/register", handlers.RegisterHandler)
+	http.HandleFunc("/api/logout", handlers.LogoutHandler)
 	http.HandleFunc("/api/checkAccount", handlers.CheckAccountHandler)
 
 	// 启动服务
