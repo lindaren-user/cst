@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	// 常用的会话存储库
 	"github.com/gorilla/sessions"
 )
 

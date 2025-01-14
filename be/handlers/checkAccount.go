@@ -23,7 +23,7 @@ func CheckAccountHandler(w http.ResponseWriter, req *http.Request) {
 	var count int
 	err = conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM t_user WHERE account=$1", account).Scan(&count)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("查询失败: %v", err), http.StatusInternalServerError)
+		fmt.Fprintf(w, `{"status":1,"msg":"查询失败: %s"}`, err.Error())
 		return
 	}
 

@@ -57,7 +57,7 @@
 				}
 
 				notyf.success("注册成功!");
-				goto("\login");
+				goto("/");
 			})
 			.catch((e) => {
 				console.log(e);

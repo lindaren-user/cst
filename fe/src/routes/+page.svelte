@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
+	import { user } from '../stores/user'
 
 	let notyf;
 
@@ -24,9 +25,10 @@
 					notyf.error('登录失败');
 					return;
 				}
-
+				
 				notyf.success('登录成功');
-				goto('/home')
+				user.set(account);
+				goto('/home');
 			})
 			.catch((e) => {
 				console.log(e);
