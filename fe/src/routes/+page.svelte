@@ -1,14 +1,15 @@
 <script>
+	import { goto } from '$app/navigation';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
 
 	let notyf;
 
-	let name = $state('');
+	let account = $state('');
 	let pwd = $state('');
 
 	let login = (e) => {
-		fetch(`/api/login?name=${name}&pwd=${pwd}`)
+		fetch(`/api/login?name=${account}&pwd=${pwd}`)
 			.then((v) => {
 				if (!v.ok) {
 					console.log(v);
@@ -25,6 +26,7 @@
 				}
 
 				notyf.success('登录成功');
+				goto('/home')
 			})
 			.catch((e) => {
 				console.log(e);
@@ -46,14 +48,14 @@
 <div class="main">
 	<div class="title h1">登录</div>
 	<div>
-		用户名: <input class="input" bind:value={name} type="text" />
+		用户名: <input class="input" bind:value={account} type="text" />
 	</div>
 	<div>
 		密码:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={pwd} type="password" />
 	</div>
 	<a href="\register">还没账号?点我注册</a>
 	<div>
-		<button class="button is-primary" disabled={name.trim() === '' || pwd.trim() === ''} onclick={login}>登录</button>
+		<button class="button is-primary" disabled={account.trim() === '' || pwd.trim() === ''} onclick={login}>登录</button>
 	</div>
 </div>
 
