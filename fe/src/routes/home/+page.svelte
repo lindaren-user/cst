@@ -7,7 +7,4 @@
 </div>
 
 <style>
-    .main{
-        margin-top: 100px;
-    }
 </style>

@@ -10,7 +10,6 @@
 	let pwd = $state('');
 
 	let login = (e) => {
-		console.log(notyf)
 		fetch(`/api/login?name=${account}&pwd=${pwd}`)
 			.then((v) => {
 				if (!v.ok) {

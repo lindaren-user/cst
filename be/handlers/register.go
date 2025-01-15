@@ -37,7 +37,8 @@ func RegisterHandler(w http.ResponseWriter, req *http.Request) {
 
 	//更新会话
 	session.Values["account"] = a
-	session.Values["pwd"] = p
+	// 密码不应该保存在session
+	// session.Values["pwd"] = p
 	// 如果是频繁使用，就保存
 	// session.Values["name"] = n
 	// session.Values["mobilePhone"] = m

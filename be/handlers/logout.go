@@ -7,7 +7,7 @@ import (
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// 获取当前会话
-	session, err := store.Get(r, "session-name")
+	session, err := store.Get(r, "session-spider")
 	if err != nil {
 		http.Error(w, "无法获取会话", http.StatusInternalServerError)
 		return
