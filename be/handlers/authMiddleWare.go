@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -11,7 +12,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		session, err := store.Get(r, "session-spider")
 		if err != nil || session.Values["account"] == nil {
 			// 如果会话不存在或没有存储账户信息，返回 401 未授权
-			http.Error(w, "未登录或会话失效", http.StatusUnauthorized)
+			fmt.Fprintf(w, `{"status": 1, "msg": "未登录或会话失效,请重新登录"}`)
 			return
 		}
 

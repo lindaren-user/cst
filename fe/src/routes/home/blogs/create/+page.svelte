@@ -79,7 +79,7 @@
             goto("/home/blogs");
         })
         .catch((e) => {
-            notyf.error(e.msg);
+            notyf.error(e.message);
         });
     }
 </script>

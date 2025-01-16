@@ -24,8 +24,7 @@
 		fetch(`/api/register?account=${account}&pwd=${pwd}&name=${name}&mobilePhone=${mobilePhone}`)
 			.then((v) => {
 				if(!v.ok){
-					notyf.error("服务器错误，请稍后再试");
-					return;
+					throw new Error("服务器错误");
 				}
 
 				return v.json();
@@ -41,8 +40,7 @@
 				goto("/");
 			})
 			.catch((e) => {
-				console.log(e);
-				notyf.error("注册错误");
+				notyf.error(e.message);
 			});
 	}
 
