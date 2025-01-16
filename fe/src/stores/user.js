@@ -22,4 +22,4 @@ function persistentWritable(key, initialValue) {
 }
 
 // 使用 persistentWritable 创建一个持久化的 store
-export const user = persistentWritable('user', { name: ''});
+export const user = persistentWritable('user', '');

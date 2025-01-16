@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
+	import { user } from '../../stores/user';
 
 	let notyf;
 
@@ -12,28 +13,7 @@
 	let name = "";
 	let mobilePhone = "";
 
-	// 检查输入框的内容
-	let checkInput = () => {
-		fetch(`/api/checkAccount?account=${account}`)
-			.then((v) => {
-				if (!v.ok) {
-					notyf.error("服务器错误，请稍后再试");
-					return;
-				}
-				
-				return v.json();
-			})
-			.then((v) => {
-				if (v && v.status !== 0) {
-					notyf.error(v.msg || "用户名重复");
-					inputAcc.focus();
-				}
-			})
-			.catch((e) => {
-				console.log(e);
-				notyf.error("无法检查用户名，请稍后再试");
-			});
-	}
+	let checkInput;
 
 	let register = () => {
 		if(account === "" || pwd === "" || name === "" || mobilePhone === ""){
@@ -57,6 +37,7 @@
 				}
 
 				notyf.success("注册成功!");
+				user.set(account);
 				goto("/");
 			})
 			.catch((e) => {
@@ -71,6 +52,26 @@
 			className: 'x-notification',
 			position: { x: 'right', y: 'top' }
 		});
+
+		// 检查输入框的内容
+		checkInput = () => {
+			fetch(`/api/checkAccount?account=${account}`)
+				.then((v) => {
+					if (!v.ok) {
+						throw new Error("服务端异常");
+					}
+					return v.json();
+				})
+				.then((v) => {
+					if (v && v.status !== 0) {
+						notyf.error(v.msg || "用户名已存在");
+						inputAcc.focus();
+					}
+				})
+				.catch((e) => {
+					notyf.error(e.message);
+				});
+		}
 	});
 </script>
 

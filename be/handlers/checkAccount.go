@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-
-	"github.com/jackc/pgx/v5"
+	"spider/db"
 )
 
 func CheckAccountHandler(w http.ResponseWriter, req *http.Request) {
@@ -13,7 +12,7 @@ func CheckAccountHandler(w http.ResponseWriter, req *http.Request) {
 	account := req.URL.Query().Get("account")
 
 	// 检查用户名是否存在（用 pgx 连接 PostgreSQL）
-	conn, err := pgx.Connect(context.Background(), "postgres://testuser:123456@localhost:5432/testdb")
+	conn, err := db.ConnectDB()
 	if err != nil {
 		http.Error(w, "无法连接数据库", http.StatusInternalServerError)
 		return
@@ -28,7 +27,7 @@ func CheckAccountHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if count > 0 {
-		fmt.Fprintln(w, `{"status":1,"msg":"用户名重复"}`)
+		fmt.Fprintln(w, `{"status":1,"msg":"用户名已存在"}`)
 	} else {
 		fmt.Fprintln(w, `{"status":0,"msg":"用户名允许"}`)
 	}

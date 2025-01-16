@@ -30,10 +30,8 @@
     fetch('/api/logout')
       .then((v) => {
         if (!v.ok) {
-          console.log(v);
-          return v;
+          throw new Error("服务端异常");
         }
-
         return v.json();
       })
       .then((v) => {
@@ -41,15 +39,11 @@
           notyf.error("退出错误");
           return;
         }
-
         notyf.success("退出成功");
         goto("/");
       })
       .catch((e) => {
-        console.log(e);
-        if (e.message) {
-          notyf.error(e.message);
-        }
+        notyf.error(e.message);
       });
   };
 
@@ -76,7 +70,7 @@
         </button>
         {#if showDropdown}
           <div class="dropdown-menu" style="top: {menuTop}px; left: {menuLeft}px;">
-            <a href="/changePwd" class="dropdown-item">修改密码</a>
+            
             <a href="#" class="dropdown-item">其他</a>
           </div>
         {/if}
@@ -87,6 +81,7 @@
 </div>
 <div class="main">
   <slot></slot>
+  <a href="/changePwd" class="dropdown-item">修改密码</a>
 </div>
 
 <style>

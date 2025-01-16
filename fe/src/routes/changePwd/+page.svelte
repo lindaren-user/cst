@@ -35,13 +35,11 @@
             return;
         }
         
-        fetch(`/api/changePwd?oldpwd=${oldPwd}&newPwd=${newPwd}`)
+        fetch(`/api/changePwd?oldPwd=${oldPwd}&newPwd=${newPwd}`)
             .then((v) => {
                 if(!v.ok){
-                    notyf.error("服务端异常");
-                    return v;
+                    throw new Error("服务端异常");
                 }
-
                 return v.json();
             })
             .then((v) => {
@@ -49,12 +47,11 @@
                     notyf.error(v.msg || "原密码错误");
                     return;
                 }
-
                 notyf.success("密码修改成功");
                 goto("/");
             })
             .catch((e) => {
-                notyf.error(e.msg || "服务端异常");
+                notyf.error(e.message || "服务端异常");
             });
     }
 

@@ -39,9 +39,6 @@ func RegisterHandler(w http.ResponseWriter, req *http.Request) {
 	session.Values["account"] = a
 	// 密码不应该保存在session
 	// session.Values["pwd"] = p
-	// 如果是频繁使用，就保存
-	// session.Values["name"] = n
-	// session.Values["mobilePhone"] = m
 
 	// 将会话数据保存到响应中，同时把会话 ID 存储到浏览器的 cookie 中
 	// 会话 ID 会通过 Set-Cookie HTTP 头部返回给浏览器，浏览器会自动存储它。每次后续的请求中，浏览器会自动发送这个 cookie，从而让服务器知道是哪一个用户发起的请求
@@ -52,5 +49,5 @@ func RegisterHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// 返回成功响应
-	fmt.Fprintf(w, `{"status":0,"msg":"注册成功"}`)
+	fmt.Fprintf(w, `{"status":0,"msg":"注册成功","account":%q}`, a)
 }

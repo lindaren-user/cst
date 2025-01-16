@@ -6,35 +6,29 @@
 
 	let notyf;
 
-	let account = $state('');
-	let pwd = $state('');
+	let account = $user;
+	let pwd = "";
 
-	let login = (e) => {
+	let login = () => {
 		fetch(`/api/login?name=${account}&pwd=${pwd}`)
 			.then((v) => {
 				if (!v.ok) {
-					console.log(v);
-					return v;
+					throw new Error("服务端异常");
 				}
-
 				return v.json();
 			})
 			.then((v) => {
-				if (v.status !== 0) {
+				if (v && v.status !== 0) {
 					console.log(v, decodeURIComponent(v.msg).replace(/\+/g, ' '));
-					notyf.error('登录失败');
+					notyf.error('密码错误');
 					return;
 				}
-				
 				notyf.success('登录成功');
 				user.set(account);
 				goto('/home');
 			})
 			.catch((e) => {
-				console.log(e);
-				if (e.message) {
-					notyf.error(e.message);
-				}
+				notyf.error(e.message);
 			});
 	};
 
@@ -57,7 +51,7 @@
 	</div>
 	<a href="\register">还没账号?点我注册</a>
 	<div>
-		<button class="button is-primary" disabled={account.trim() === '' || pwd.trim() === ''} onclick={login}>登录</button>
+		<button class="button is-primary" disabled={!account || !pwd} onclick={login}>登录</button>
 	</div>
 </div>
 

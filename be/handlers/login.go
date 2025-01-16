@@ -29,6 +29,20 @@ func LoginHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// 如果会话不存在，会自动生成一个新的会话 ID
+	session, err := store.Get(req, "session-spider")
+	if err != nil {
+		http.Error(w, "无法获取会话", http.StatusInternalServerError)
+		return
+	}
+
+	session.Values["account"] = a
+
+	// 使用了 gorilla/sessions，不需要手动设置 http.Cookie
+	// Set-Cookie: session-spider=MTczNjk5Njg1NXx...; Path=/; HttpOnly; Secure
+	// 使用 session.Save(req, w) 保存会话数据，这时 gorilla/sessions 会自动在响应中设置 session-spider Cookie
+	session.Save(req, w)
+
 	// 返回成功响应
 	fmt.Fprintf(w, `{"status":0,"msg":"登录成功"}`)
 }
