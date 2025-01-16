@@ -7,22 +7,12 @@
   let notyf;
   let showDropdown = false; // 控制下拉菜单的显示状态
 
-  let dropdownButton; // 获取设置按钮的 DOM 元素
   let menuTop = 0; // 菜单的垂直位置
   let menuLeft = 0; // 菜单的水平位置
 
-  const toggleDropdown = () => {
-    console.log("显示")
+  let toggleDropdown = () => {
     showDropdown = !showDropdown;
-
-    if (showDropdown && dropdownButton) {
-      const rect = dropdownButton.getBoundingClientRect();
-      menuTop = rect.bottom + 20; // 按钮底部的位置
-      menuLeft = rect.left;  // 按钮左侧的位置
-
-      console.log("yp")
-    }
-};
+  };
  
   let logout = () => {
     user.set(null);
@@ -62,26 +52,31 @@
     <a href="/home/blogs" class="navbar-item">我的博客</a>
   </div>
   <div class="navbar-right">
-    <p class="navbar-account">你好！{$user}</p>
-    <div class="dropdown">
+    {#if $user}
+      <p class="navbar-account">你好！{$user}</p>
+    {:else}
+      <p class="navbar-account">未登录</p>
+    {/if}
       <div class="dropdown">
-        <button class="dropdown-button" on:click={toggleDropdown} bind:this={dropdownButton}>
+        <button class="dropdown-button" on:click={toggleDropdown}>
           <i class="fa-solid fa-gear"></i> 设置
         </button>
         {#if showDropdown}
           <div class="dropdown-menu" style="top: {menuTop}px; left: {menuLeft}px;">
-            
+            <a href="/changePwd" class="dropdown-item">修改密码</a>
             <a href="#" class="dropdown-item">其他</a>
           </div>
         {/if}
       </div>
-    </div>
-    <a href="#" class="navbar-item navbar-logout" on:click={logout}>退出登录</a>
+      {#if $user}
+        <a href="#" class="navbar-item navbar-logout" on:click={logout}>退出登录</a>
+      {:else}
+        <a href="/" class="navbar-item navbar-logout">前往登录</a>
+      {/if}
   </div>
 </div>
 <div class="main">
   <slot></slot>
-  <a href="/changePwd" class="dropdown-item">修改密码</a>
 </div>
 
 <style>

@@ -9,6 +9,7 @@ import (
 func main() {
 	// 注册身份验证中间件
 	http.Handle("/api/changePwd", handlers.AuthMiddleware(http.HandlerFunc(handlers.ChangePwdHandler)))
+	http.Handle("/api/createBlogs", handlers.AuthMiddleware(http.HandlerFunc(handlers.CreateBlogsHandler)))
 
 	// 其他公共路由
 	http.HandleFunc("/api/login", handlers.LoginHandler)
