@@ -3,6 +3,7 @@
   import { Notyf } from 'notyf';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+	import { blogs } from '../../stores/blogs';
 
   let notyf;
   let showDropdown = false; // 控制下拉菜单的显示状态
@@ -16,6 +17,7 @@
  
   let logout = () => {
     user.set(null);
+    blogs.set([]);
 
     fetch('/api/logout')
       .then((v) => {
@@ -80,6 +82,8 @@
 </div>
 
 <style>
+  @import 'notyf/notyf.min.css';
+	@import 'bulma/css/bulma.css';
   /* 固定在顶部的导航栏样式 */
   .navbar {
     position: fixed;

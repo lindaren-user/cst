@@ -15,7 +15,7 @@ type Blog struct {
 	Content string `json:"content"`
 }
 
-func ShowBlogsHandler(w http.ResponseWriter, r *http.Request) {
+func ShowAllBlogsHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-spider")
 	a := session.Values["account"]
 

@@ -1,47 +1,46 @@
 <script>
+    import { blogs } from "../../../../stores/blogs"
+    import { page } from '$app/stores'; // 导入 page store
 	import { onMount } from "svelte";
-    import { Notyf } from "notyf"
-
-    let notyf;
-    let blogs = [];
-
+	import { goto } from "$app/navigation";
+  
+    // 从 page store 中获取 URL 查询参数
+    let id;
+    let blog;
     onMount(() => {
-        fetch("/api/showBlogs")
-            .then((v) => {
-                if(!v.ok) {
-                    throw new Error("服务端异常");
-                }
-                return v.json();
-            })
-            .then((v) => {
-                if(v && v.status !== 0) {
-                    notyf.error(v.msg);
-                    return;
-                }
-                blogs = v.blogs;
-            })
-            .catch((e) => {
-                notyf.error(e.message);
-            });
+        id = $page.url.searchParams.get('id'); // 得到的是字符串
 
-        notyf = new Notyf({
-            duration: 3000,
-            className: 'x-notification',
-            position: { x: 'right', y: 'top' }
-		});
-    })
+        if (id) {
+            blog = $blogs.find(b => b.id == id);
+        }
+  });
 </script>
 
-<h2>我的文章</h2>
-{#if blogs.length === 0}
-    <p>暂无文章</p>
+<button on:click={ () => { goto("/home/blogs")}} class="back-btn">返回</button>
+<br><br>
+{#if blog}
+    <div class="blog-title">{blog.title}</div>
+    <div class="blog-content">{@html blog.content}</div>
 {:else}
-    <ul>
-        {#each blogs as blog}
-            <li>
-                <div>{blog.title}</div>
-                <div>{@html blog.content}</div>
-            </li>
-        {/each}
-    </ul>
+    没有文章
 {/if}
+
+<style>
+    .back-btn {
+        border: 1px black solid;
+        background-color: aquamarine;
+    }
+
+    .blog-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .blog-content {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+    }
+</style>

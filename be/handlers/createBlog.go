@@ -39,7 +39,6 @@ func CreateBlogsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(article.Content)
 	session, _ := store.Get(r, "session-spider")
 	a := session.Values["account"]
 
