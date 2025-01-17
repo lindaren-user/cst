@@ -6,14 +6,6 @@
 	import { blogs } from '../../stores/blogs';
 
   let notyf;
-  let showDropdown = false; // 控制下拉菜单的显示状态
-
-  let menuTop = 0; // 菜单的垂直位置
-  let menuLeft = 0; // 菜单的水平位置
-
-  let toggleDropdown = () => {
-    showDropdown = !showDropdown;
-  };
  
   let logout = () => {
     user.set(null);
@@ -57,18 +49,12 @@
     {#if $user}
       <p class="navbar-account">你好！{$user}</p>
     {:else}
-      <p class="navbar-account">未登录</p>
+      <p class="navbar-account">未登录</p>  
     {/if}
       <div class="dropdown">
-        <button class="dropdown-button" on:click={toggleDropdown}>
-          <i class="fa-solid fa-gear"></i> 设置
+        <button class="dropdown-button" on:click={() => {goto("/changePwd")}}>
+          <i class="fa-solid fa-gear" ></i>修改密码
         </button>
-        {#if showDropdown}
-          <div class="dropdown-menu" style="top: {menuTop}px; left: {menuLeft}px;">
-            <a href="/changePwd" class="dropdown-item">修改密码</a>
-            <a href="#" class="dropdown-item">其他</a>
-          </div>
-        {/if}
       </div>
       {#if $user}
         <a href="#" class="navbar-item navbar-logout" on:click={logout}>退出登录</a>
@@ -82,8 +68,8 @@
 </div>
 
 <style>
-  @import 'notyf/notyf.min.css';
-	@import 'bulma/css/bulma.css';
+  /* @import 'notyf/notyf.min.css';
+	@import 'bulma/css/bulma.css'; */
   /* 固定在顶部的导航栏样式 */
   .navbar {
     position: fixed;
@@ -160,30 +146,4 @@
   .dropdown-button:hover {
     color: #ffcc00;
   }
-
-  /* 下拉菜单样式 */
-  /* 下拉菜单样式 */
-.dropdown-menu {
-  position: fixed; /* 固定菜单位置 */
-  background-color: #444;
-  border: 1px solid #555;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  width: 150px;
-}
-
-.dropdown-item {
-  color: white;
-  text-decoration: none;
-  display: block;
-  padding: 10px;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.dropdown-item:hover {
-  background-color: #555;
-}
-
 </style>

@@ -19,7 +19,6 @@
 			})
 			.then((v) => {
 				if (v && v.status !== 0) {
-					console.log(v, decodeURIComponent(v.msg).replace(/\+/g, ' '));
 					notyf.error('密码错误');
 					return;
 				}
