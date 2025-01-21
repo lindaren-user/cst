@@ -11,7 +11,7 @@ import (
 func DeleteBlogHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := db.ConnectDB()
 	if err != nil {
-		http.Error(w, "无法连接数据库", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("无法连接数据库, %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	defer conn.Close(context.Background())
@@ -21,9 +21,24 @@ func DeleteBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 	id := parts[len(parts)-1]
 
+	var a string
+	err = conn.QueryRow(context.Background(), "SELECT author FROM t_article WHERE id = $1", id).Scan(&a)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("数据库操作失败: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	session, _ := store.Get(r, "session-spider")
+	if a != session.Values["account"] {
+		if session.Values["role"] != "admin" {
+			fmt.Fprintf(w, `{"status": 1, "msg": "没有权限"}`)
+			return
+		}
+	}
+
 	_, err = conn.Exec(context.Background(), "DELETE FROM t_article WHERE id = $1", id)
 	if err != nil {
-		http.Error(w, "数据库操作失败", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("数据库操作失败: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

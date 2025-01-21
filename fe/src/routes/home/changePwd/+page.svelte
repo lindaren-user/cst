@@ -35,24 +35,32 @@
             return;
         }
         
-        fetch(`/api/changePwd?oldPwd=${oldPwd}&newPwd=${newPwd}`)
-            .then((v) => {
-                if(!v.ok){
-                    throw new Error("服务端异常");
-                }
-                return v.json();
+        fetch("/api/changePwd", {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                oldPwd, newPwd
             })
-            .then((v) => {
-                if(v && v.status !== 0){
-                    notyf.error(v.msg || "原密码错误");
-                    return;
-                }
-                notyf.success("密码修改成功");
-                goto("/");
-            })
-            .catch((e) => {
-                notyf.error(e.message || "服务端异常");
-            });
+        })
+        .then((v) => {
+            if(!v.ok){
+                throw new Error("服务端异常");
+            }
+            return v.json();
+        })
+        .then((v) => {
+            if(v && v.status !== 0){
+                notyf.error(v.msg || "原密码错误");
+                return;
+            }
+            notyf.success("密码修改成功");
+            goto("/");
+        })
+        .catch((e) => {
+            notyf.error(e.message || "服务端异常");
+        });
     }
 
 	onMount(() => {

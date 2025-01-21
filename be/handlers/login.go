@@ -2,12 +2,19 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"spider/db"
 )
 
-func LoginHandler(w http.ResponseWriter, req *http.Request) {
+type Logining struct {
+	Account string `json:"account"`
+	Pwd     string `json:"pwd"`
+	Role    string `json:"role"`
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// 获取数据库连接
 	conn, err := db.ConnectDB()
 	if err != nil {
@@ -16,32 +23,41 @@ func LoginHandler(w http.ResponseWriter, req *http.Request) {
 	}
 	defer conn.Close(context.Background())
 
-	// 从请求 URL 获取用户名和密码
-	a := req.URL.Query().Get("name")
-	c := req.URL.Query().Get("pwd")
+	var logining Logining
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&logining)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("错误的json:, %s", err.Error()), http.StatusBadRequest)
+		return
+	}
 
 	// 执行 SQL 查询验证用户
-	var account, cert string
-	err = conn.QueryRow(context.Background(), "SELECT account, user_token FROM t_user WHERE account=$1 AND user_token=crypt($2, user_token)", a, c).Scan(&account, &cert)
+	var account, role, cert string
+	err = conn.QueryRow(context.Background(), "SELECT account, user_token, category FROM t_user WHERE account=$1 AND category=$2 AND user_token=crypt($3, user_token)", logining.Account, logining.Role, logining.Pwd).Scan(&account, &role, &cert)
 	if err != nil {
 		// 返回错误信息
-		fmt.Fprintf(w, `{"status":1,"msg":"验证失败: %s"}`, err.Error())
+		fmt.Fprintf(w, `{"status":1,"msg":"用户名、密码或身份错误"}`)
 		return
 	}
 
 	// 如果会话不存在，会自动生成一个新的会话 ID
-	session, err := store.Get(req, "session-spider")
+	session, err := store.Get(r, "session-spider")
 	if err != nil {
-		http.Error(w, "无法获取会话", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("无法获取会话: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 
-	session.Values["account"] = a
+	session.Values["account"] = logining.Account
+	session.Values["role"] = logining.Role
 
 	// 使用了 gorilla/sessions，不需要手动设置 http.Cookie
 	// Set-Cookie: session-spider=MTczNjk5Njg1NXx...; Path=/; HttpOnly; Secure
 	// 使用 session.Save(req, w) 保存会话数据，这时 gorilla/sessions 会自动在响应中设置 session-spider Cookie
-	session.Save(req, w)
+	err = session.Save(r, w)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("无法保存会话, %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
 
 	// 返回成功响应
 	fmt.Fprintf(w, `{"status":0,"msg":"登录成功"}`)

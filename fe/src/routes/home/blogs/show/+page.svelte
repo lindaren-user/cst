@@ -3,7 +3,8 @@
     import { page } from '$app/stores'; // 导入 page store
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
-  
+
+    export let data;
     // 从 page store 中获取 URL 查询参数
     let id;
     let blog;
@@ -20,6 +21,9 @@
 <br><br>
 {#if blog}
     <div class="blog-title">{blog.title}</div>
+    {#if data.role === 'admin'}
+        <div class="blog-author">{blog.author}</div>
+    {/if}
     <div class="blog-content">{@html blog.content}</div>
 {:else}
     没有文章
@@ -32,6 +36,13 @@
     }
 
     .blog-title {
+        font-size: 30px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .blog-author {
         font-size: 18px;
         font-weight: bold;
         color: #333;

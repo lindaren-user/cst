@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// 采用 session 认证
 // 验证用户是否登录的中间件
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

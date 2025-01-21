@@ -9,7 +9,18 @@ import (
 	"strings"
 )
 
-func EditBlogHandler(w http.ResponseWriter, r *http.Request) {
+type ModifyingUser struct {
+	Account string `json:"account"`
+	Pwd     string `json:"pwd"`
+}
+
+func ModifyInfoHandler(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "session-spider")
+	if session.Values["role"] != "admin" {
+		fmt.Fprintf(w, `{"status": 1, "msg": "没有权限"}`)
+		return
+	}
+
 	conn, err := db.ConnectDB()
 	if err != nil {
 		http.Error(w, fmt.Sprintf("无法连接数据库, %s", err.Error()), http.StatusInternalServerError)
@@ -22,16 +33,16 @@ func EditBlogHandler(w http.ResponseWriter, r *http.Request) {
 
 	id := parts[len(parts)-1]
 
-	var article Article
+	var modifyingUser ModifyingUser
 
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&article)
+	err = decoder.Decode(&modifyingUser)
 	if err != nil {
 		http.Error(w, "错误的json", http.StatusBadRequest)
 		return
 	}
 
-	_, err = conn.Exec(context.Background(), "UPDATE t_article SET title = $1, content = $2 WHERE id = $3", article.Title, article.Content, id)
+	_, err = conn.Exec(context.Background(), "UPDATE t_user SET account = $1, user_token = crypt($2, gen_salt('bf')) WHERE id = $3", modifyingUser.Account, modifyingUser.Pwd, id)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("数据库操作失败: %s", err.Error()), http.StatusInternalServerError)
 		return

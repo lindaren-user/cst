@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"net/http"
 	"spider/db"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // Go 的结构体字段需要是大写字母开头的，否则无法被 JSON 编码器（json.NewEncoder）访问到
 type Blog struct {
 	Id      int    `json:"id"`
+	Author  string `json:"author"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
@@ -18,17 +21,27 @@ type Blog struct {
 func ShowAllBlogsHandler(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-spider")
 	a := session.Values["account"]
+	role := session.Values["role"]
 
 	conn, err := db.ConnectDB()
 	if err != nil {
-		http.Error(w, "无法连接数据库", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("无法连接数据库, %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	defer conn.Close(context.Background())
 
-	rows, err := conn.Query(context.Background(), "SELECT id, title, content FROM t_article WHERE author = $1", a)
+	var rows pgx.Rows
+	if role == "user" {
+		rows, err = conn.Query(context.Background(), "SELECT id, author, title, content FROM t_article WHERE author = $1", a)
+	} else if role == "admin" {
+		rows, err = conn.Query(context.Background(), "SELECT id, author, title, content FROM t_article")
+	} else {
+		fmt.Fprintf(w, `{"status":1,"msg":"没有权限"}`)
+		return
+	}
+
 	if err != nil {
-		http.Error(w, "数据库查询出错", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("数据库操作失败: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
@@ -37,7 +50,7 @@ func ShowAllBlogsHandler(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var blog Blog
 
-		if err = rows.Scan(&blog.Id, &blog.Title, &blog.Content); err != nil {
+		if err = rows.Scan(&blog.Id, &blog.Author, &blog.Title, &blog.Content); err != nil {
 			http.Error(w, "数据库查询出错", http.StatusInternalServerError)
 			return
 		}
@@ -57,7 +70,7 @@ func ShowAllBlogsHandler(w http.ResponseWriter, r *http.Request) {
 		"blogs":  blogs,
 	})
 	if err != nil {
-		fmt.Fprintf(w, `{"status": 1, "msg": "展示出错"}`)
+		http.Error(w, fmt.Sprintf("展示出错, %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 }

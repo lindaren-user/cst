@@ -22,9 +22,9 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// 保存清除后的会话
 	err = session.Save(r, w)
 	if err != nil {
-		http.Error(w, "无法保存会话", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("无法保存会话, %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintln(w, `{"status": 0, "msg": "退出成功"}`)
+	fmt.Fprintf(w, `{"status": 0, "msg": "退出成功"}`)
 }

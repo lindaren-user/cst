@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import { Notyf } from 'notyf';
     import RichTextEditor from '$lib/components/RichTextEditor.svelte'; // 导入富文本编辑器组件
-	import { onMount } from 'svelte';
+	  import { onMount } from 'svelte';
   
     let title = "";
     let content = ''; // 用于存储编辑器内容
@@ -61,7 +61,7 @@
   
 <style>
     @import 'notyf/notyf.min.css';
-	@import 'bulma/css/bulma.css';
+	  @import 'bulma/css/bulma.css';
     input[type="text"] {
         width: 100%;
         padding: 8px;

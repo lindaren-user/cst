@@ -1,34 +1,43 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { user } from '../stores/user';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
 
 	let notyf;
+	let role = "user";  // 设置默认值为 'user'
 
-	let account = $user;
+	let account = "";
 	let pwd = "";
 
 	let login = () => {
-		fetch(`/api/login?name=${account}&pwd=${pwd}`)
-			.then((v) => {
-				if (!v.ok) {
-					throw new Error("服务端异常");
-				}
-				return v.json();
+		fetch(`/api/login`, {
+			method: "POST",
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				account,
+				pwd,
+				role
 			})
-			.then((v) => {
-				if (v && v.status !== 0) {
-					notyf.error('密码错误');
-					return;
-				}
-				notyf.success('登录成功');
-				user.set(account);
-				goto('/home');
-			})
-			.catch((e) => {
-				notyf.error(e.message);
-			});
+		})
+		.then((v) => {
+			if (!v.ok) {
+				throw new Error("服务端异常");
+			}
+			return v.json();
+		})
+		.then((v) => {
+			if (v && v.status !== 0) {
+				notyf.error(v.msg);
+				return;
+			}
+			notyf.success('登录成功');
+			goto('/home');
+		})
+		.catch((e) => {
+			notyf.error(e.message);
+		});
 	};
 
 	onMount(() => {
@@ -49,8 +58,16 @@
 		密码:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={pwd} type="password" />
 	</div>
 	<a href="\register">还没账号?点我注册</a>
+	<div>	
+		<label>
+		  <input type="radio" bind:group={role} value="admin" /> 管理员
+		</label>
+		<label>	
+		  <input type="radio" bind:group={role} value="user" /> 普通用户
+		</label>
+	</div>
 	<div>
-		<button class="button is-primary" disabled={!account || !pwd} onclick={login}>登录</button>
+		<button class="button is-primary" onclick={login}>登录</button>
 	</div>
 </div>
 

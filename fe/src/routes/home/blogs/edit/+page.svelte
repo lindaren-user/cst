@@ -2,7 +2,7 @@
     import { goto } from '$app/navigation';
     import { Notyf } from 'notyf';
     import RichTextEditor from '$lib/components/RichTextEditor.svelte'; // 导入富文本编辑器组件
-	import { onMount } from 'svelte';
+	  import { onMount } from 'svelte';
     import { blogs } from "../../../../stores/blogs"
     import { page } from '$app/stores'; // 导入 page store
   
@@ -57,7 +57,7 @@
         notyf.success(v.msg);
 
         blogs.set($blogs.map(blog => blog.id == id ? {
-            id: id,
+            id,
             ...article
         } : blog));
 
@@ -82,7 +82,7 @@
   
 <style>
     @import 'notyf/notyf.min.css';
-	@import 'bulma/css/bulma.css';
+	  @import 'bulma/css/bulma.css';
     input[type="text"] {
         width: 100%;
         padding: 8px;

@@ -16,15 +16,15 @@ type Article struct {
 
 func CreateBlogsHandler(w http.ResponseWriter, r *http.Request) {
 	// 验证请求方法
-	if r.Method != http.MethodPost {
-		http.Error(w, "请求方法错误", http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	http.Error(w, "请求方法错误", http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	// 连接数据库
 	conn, err := db.ConnectDB()
 	if err != nil {
-		http.Error(w, "无法连接数据库", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("无法连接数据库, %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 	defer conn.Close(context.Background())
@@ -35,7 +35,7 @@ func CreateBlogsHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&article)
 	if err != nil {
-		http.Error(w, "错误的json", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("错误的json:, %s", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -44,7 +44,7 @@ func CreateBlogsHandler(w http.ResponseWriter, r *http.Request) {
 
 	_, err = conn.Exec(context.Background(), "INSERT INTO t_article (author, title, content) VALUES ($1, $2, $3)", a, article.Title, article.Content)
 	if err != nil {
-		http.Error(w, "数据库操作失败", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("数据库操作失败: %s", err.Error()), http.StatusInternalServerError)
 		return
 	}
 

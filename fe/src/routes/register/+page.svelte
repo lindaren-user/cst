@@ -2,7 +2,11 @@
 	import { goto } from '$app/navigation';
 	import { Notyf } from 'notyf';
 	import { onMount } from 'svelte';
-	import { user } from '../../stores/user';
+	import { users } from '../../stores/users';
+
+	export let data;
+
+	let func = data.role === "admin" ? "创建" : "注册";
 
 	let notyf;
 
@@ -11,37 +15,58 @@
 	let account = "";
 	let pwd = "";
 	let name = "";
-	let mobilePhone = "";
+	let mobile_phone = "";
+	let role = "user";
 
 	let checkInput;
 
 	let register = () => {
-		if(account === "" || pwd === "" || name === "" || mobilePhone === ""){
+		if(account === "" || pwd === "" || name === "" || mobile_phone === ""){
 			notyf.error("请输入完整信息");
 			return;
 		}
 
-		fetch(`/api/register?account=${account}&pwd=${pwd}&name=${name}&mobilePhone=${mobilePhone}`)
-			.then((v) => {
-				if(!v.ok){
-					throw new Error("服务器错误");
-				}
-
-				return v.json();
-			})
-			.then((v) => {
-				if (v && v.status !== 0) {
-					notyf.error(v.msg || "注册出错");
-					return;
-				}
-
-				notyf.success("注册成功!");
-				user.set(account);
-				goto("/");
-			})
-			.catch((e) => {
-				notyf.error(e.message);
-			});
+		fetch(`/api/register`, {
+			method: "POST",
+			headers: {
+          		'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				account,
+				pwd,
+				name,
+				mobilePhone: mobile_phone,
+				role
+			}),
+		})
+		.then((v) => {
+			if(!v.ok){
+				throw new Error("服务器错误");
+			}
+			return v.json();
+		})
+		.then((v) => {
+			if (v && v.status !== 0) {
+				notyf.error(v.msg);
+				return;
+			}
+			if(data.role === 'admin') {
+				let usersTemp = $users;
+				usersTemp.unshift({
+					id: v.id,
+					account,
+					name,
+					mobile_phone
+				});
+				users.set(usersTemp);
+				goto("/home/accountAdmin");
+			}
+			else goto("/");
+			notyf.success(`注册成功!`);
+		})
+		.catch((e) => {
+			notyf.error(e.message);
+		});
 	}
 
 	onMount(() => {
@@ -62,7 +87,7 @@
 				})
 				.then((v) => {
 					if (v && v.status !== 0) {
-						notyf.error(v.msg || "用户名已存在");
+						notyf.error(v.msg);
 						inputAcc.focus();
 					}
 				})
@@ -74,7 +99,7 @@
 </script>
 
 <div class="main">
-	<div class="title h1">注册</div>
+	<div class="title h1">{func}</div>
 	<div>
 		用户名: <input class="input" bind:value={account} type="text" on:blur={checkInput} bind:this={inputAcc}/>
 	</div>
@@ -85,10 +110,22 @@
 		姓名:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={name} type="text"  />
 	</div>
 	<div>
-		电话:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={mobilePhone} type="text" />
+		电话:&nbsp;&nbsp;&nbsp; <input class="input" bind:value={mobile_phone} type="text" />
 	</div>
+	{#if data.role === 'admin'}
+	<div>	
+		<label>
+		  <input type="radio" bind:group={role} value="admin" /> 管理员
+		</label>
+		<label>	
+		  <input type="radio" bind:group={role} value="user" /> 普通用户
+		</label>
+	</div>
+	{:else}
+	<p>注意只是普通用户</p>
+	{/if}
 	<div>
-		<button class="button is-primary" on:click={register}>注册</button>
+		<button class="button is-primary" on:click={register}>{func}</button>
 	</div>
 </div>
 
@@ -109,5 +146,11 @@
 		div {
 			padding: 1em;
 		}
+	}
+
+	p{
+		margin-left: 150px;
+		font-size: 13px;
+		color: red;
 	}
 </style>
