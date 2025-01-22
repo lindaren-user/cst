@@ -2,6 +2,7 @@ module spider // module spider 这行声明了该 Go 项目的模块名为 spide
 
 go 1.23.4 // 表示使用 Go 1.18 或更高版本
 
+// 记录的是项目的依赖
 require (
 	github.com/gorilla/sessions v1.4.0
 	github.com/jackc/pgx/v5 v5.7.2

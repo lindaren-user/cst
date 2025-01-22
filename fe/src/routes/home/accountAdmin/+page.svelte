@@ -6,7 +6,7 @@
 
     let notyf;
     let deleteUser;
-
+    
     onMount(() => {
         notyf = new Notyf({
             duration: 3000,

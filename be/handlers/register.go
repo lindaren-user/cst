@@ -34,7 +34,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 获取会话
-	session, _ := store.Get(r, "session-spider")
+	session, err := store.Get(r, "session-spider")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("无法获取会话: %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
 	if session.Values["role"] != "admin" && newUser.Role == "admin" {
 		fmt.Fprintf(w, `{"status":1,"msg":"没有权限"}`)
 		return

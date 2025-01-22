@@ -68,9 +68,9 @@
     <ul>
         {#each $blogs as blog (blog.id)}
             <li class="blog-item" id={blog.id}>
-                <div class="blog-title">{blog.title}</div>
+                <div class="blog-title">标题：{blog.title}</div>
                 {#if data.role === 'admin'}
-                    <div class="blog-author">{blog.author}</div>
+                    <div class="blog-author">作者：{blog.author}</div>
                 {/if}
                 <div class="blog-content">{@html blog.content}</div>
                 <div class="blog-actions">
@@ -112,8 +112,8 @@
     }
 
     .blog-content {
-        font-size: 14px;
-        color: #555;
+        font-size: 18px;
+        color: #555;    
         line-height: 1.6;
         height: 50px;
         overflow: hidden;

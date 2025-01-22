@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"spider/db"
 	"strings"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ModifyingUser struct {
-	Account string `json:"account"`
-	Pwd     string `json:"pwd"`
+	Account pgtype.Text `json:"account"`
+	Pwd     pgtype.Text `json:"pwd"`
 }
 
 func ModifyInfoHandler(w http.ResponseWriter, r *http.Request) {

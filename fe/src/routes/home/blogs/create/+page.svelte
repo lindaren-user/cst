@@ -40,11 +40,11 @@
     };
 
     onMount(() => {
-      notyf = new Notyf({
-      duration: 3000,
-      className: 'x-notification',
-      position: { x: 'right', y: 'top' }
-    });
+        notyf = new Notyf({
+          duration: 3000,
+          className: 'x-notification',
+          position: { x: 'right', y: 'top' }
+        });
     })
 </script>
   

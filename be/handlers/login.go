@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"net/http"
 	"spider/db"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Logining struct {
-	Account string `json:"account"`
-	Pwd     string `json:"pwd"`
-	Role    string `json:"role"`
+	Account pgtype.Text `json:"account"`
+	Pwd     pgtype.Text `json:"pwd"`
+	Role    pgtype.Text `json:"role"`
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +34,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 执行 SQL 查询验证用户
-	var account, role, cert string
-	err = conn.QueryRow(context.Background(), "SELECT account, user_token, category FROM t_user WHERE account=$1 AND category=$2 AND user_token=crypt($3, user_token)", logining.Account, logining.Role, logining.Pwd).Scan(&account, &role, &cert)
+	var account, role pgtype.Text
+	err = conn.QueryRow(context.Background(), "SELECT account, category FROM t_user WHERE account=$1 AND category=$2 AND user_token=crypt($3, user_token)", logining.Account, logining.Role, logining.Pwd).Scan(&account, &role)
 	if err != nil {
 		// 返回错误信息
 		fmt.Fprintf(w, `{"status":1,"msg":"用户名、密码或身份错误"}`)
@@ -47,8 +49,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session.Values["account"] = logining.Account
-	session.Values["role"] = logining.Role
+	// 使用字符串存储账号和角色，而不是 pgtype.Text
+	session.Values["account"] = logining.Account.String
+	session.Values["role"] = logining.Role.String
 
 	// 使用了 gorilla/sessions，不需要手动设置 http.Cookie
 	// Set-Cookie: session-spider=MTczNjk5Njg1NXx...; Path=/; HttpOnly; Secure

@@ -31,8 +31,14 @@
 
 <style>
     .back-btn {
-        border: 1px black solid;
-        background-color: aquamarine;
+        margin-left: 8px;
+        padding: 6px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        background-color: green;
     }
 
     .blog-title {

@@ -6,13 +6,15 @@ import (
 	"fmt"
 	"net/http"
 	"spider/db"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type User struct {
-	Id           int    `json:"id"`
-	Account      string `json:"account"`
-	Name         string `json:"name"`
-	Mobile_Phone string `json:"mobile_phone"`
+	Id           pgtype.Int4 `json:"id"`
+	Account      pgtype.Text `json:"account"`
+	Name         pgtype.Text `json:"name"`
+	Mobile_Phone pgtype.Text `json:"mobile_phone"`
 }
 
 func GetAllAccountsHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +41,7 @@ func GetAllAccountsHandler(w http.ResponseWriter, r *http.Request) {
 	var users []User
 	for rows.Next() {
 		var user User
+		// 在这里处理每一行的查询结果
 		if err = rows.Scan(&user.Id, &user.Account, &user.Name, &user.Mobile_Phone); err != nil {
 			http.Error(w, fmt.Sprintf("读取数据库结果出错: %v", err), http.StatusInternalServerError)
 			return
@@ -48,10 +51,11 @@ func GetAllAccountsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 检查是否存在查询错误
 	if err := rows.Err(); err != nil {
-		http.Error(w, "读取数据库结果出错", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("读取数据库结果出错: %v", err), http.StatusInternalServerError)
 		return
 	}
 
+	// 使用 json.NewEncoder 编码返回的数据
 	encoder := json.NewEncoder(w)
 	err = encoder.Encode(map[string]interface{}{
 		"status": 0,

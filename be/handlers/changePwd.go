@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"spider/db"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type PwdPair struct {
-	Old string `json:"oldPwd"`
-	New string `json:"newPwd"`
+	Old pgtype.Text `json:"oldPwd"`
+	New pgtype.Text `json:"newPwd"`
 }
 
 func ChangePwdHandler(w http.ResponseWriter, r *http.Request) {

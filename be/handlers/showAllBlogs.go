@@ -8,14 +8,15 @@ import (
 	"spider/db"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // Go 的结构体字段需要是大写字母开头的，否则无法被 JSON 编码器（json.NewEncoder）访问到
 type Blog struct {
-	Id      int    `json:"id"`
-	Author  string `json:"author"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	Id      pgtype.Int4 `json:"id"`
+	Author  pgtype.Text `json:"author"`
+	Title   pgtype.Text `json:"title"`
+	Content pgtype.Text `json:"content"`
 }
 
 func ShowAllBlogsHandler(w http.ResponseWriter, r *http.Request) {
