@@ -59,6 +59,7 @@
                     pwd
                 }: u));
                 notyf.success(v.msg);
+                goto("/home/accountAdmin");
             })
             .catch((e) => {
                 notyf.error(e.message);

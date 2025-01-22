@@ -62,7 +62,8 @@
 				goto("/home/accountAdmin");
 			}
 			else goto("/");
-			notyf.success(`注册成功!`);
+
+			notyf.success(`${func}成功!`);
 		})
 		.catch((e) => {
 			notyf.error(e.message);
