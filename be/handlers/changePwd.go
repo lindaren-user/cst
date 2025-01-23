@@ -11,8 +11,8 @@ import (
 )
 
 type PwdPair struct {
-	Old pgtype.Text `json:"oldPwd"`
-	New pgtype.Text `json:"newPwd"`
+	Old string `json:"oldPwd"`
+	New string `json:"newPwd"`
 }
 
 func ChangePwdHandler(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,7 @@ func ChangePwdHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var account string
+	var account pgtype.Text
 	err = conn.QueryRow(context.Background(), "SELECT account FROM t_user WHERE account=$1 AND user_token=crypt($2, user_token)", a, pwdPair.Old).Scan(&account)
 	if err != nil {
 		// 返回错误信息

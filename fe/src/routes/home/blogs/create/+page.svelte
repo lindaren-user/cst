@@ -5,7 +5,7 @@
 	  import { onMount } from 'svelte';
   
     let title = "";
-    let content = ''; // 用于存储编辑器内容
+    let content = ""; // 用于存储编辑器内容
     let notyf;
   
     // 提交表单

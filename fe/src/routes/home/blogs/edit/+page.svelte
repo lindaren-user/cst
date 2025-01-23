@@ -69,6 +69,7 @@
     };
 </script>
   
+<button on:click={ () => { goto("/home/blogs")}} class="back-btn">返回</button>
 <h2>编辑文章</h2>
 <form on:submit|preventDefault={edit}>
 <label for="title">标题:</label>
@@ -89,6 +90,17 @@
         margin-bottom: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
+    }
+
+    .back-btn {
+        margin-left: 8px;
+        padding: 6px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        background-color: green;
     }
 
     button {

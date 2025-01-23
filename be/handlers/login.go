@@ -11,9 +11,9 @@ import (
 )
 
 type Logining struct {
-	Account pgtype.Text `json:"account"`
-	Pwd     pgtype.Text `json:"pwd"`
-	Role    pgtype.Text `json:"role"`
+	Account string `json:"account"`
+	Pwd     string `json:"pwd"`
+	Role    string `json:"role"`
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,8 +50,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 使用字符串存储账号和角色，而不是 pgtype.Text
-	session.Values["account"] = logining.Account.String
-	session.Values["role"] = logining.Role.String
+	session.Values["account"] = logining.Account
+	session.Values["role"] = logining.Role
 
 	// 使用了 gorilla/sessions，不需要手动设置 http.Cookie
 	// Set-Cookie: session-spider=MTczNjk5Njg1NXx...; Path=/; HttpOnly; Secure

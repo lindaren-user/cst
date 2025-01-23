@@ -6,14 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"spider/db"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // 定义结构体来映射接收到的 JSON 数据
 type Article struct {
-	Title   pgtype.Text `json:"title"`
-	Content pgtype.Text `json:"content"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
 func CreateBlogsHandler(w http.ResponseWriter, r *http.Request) {
