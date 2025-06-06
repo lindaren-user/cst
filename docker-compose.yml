@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./be # 构建镜像的目录，就是 Dockerfile 和源码 所在的文件夹
+      dockerfile: Dockerfile # 指定 Dockerfile 名称（可省略，默认就是 Dockerfile）
+    ports:
+      - "9090:9090" # 将容器的 9090 端口映射到宿主机的 9090 端口
+
+  frontend:
+    build:
+      context: ./fe # 构建目录，应包含前端项目和 Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "80:80" # 映射前端开发服务器端口

@@ -25,8 +25,8 @@ func main() {
 	http.HandleFunc("/api/checkAccount", handlers.CheckAccountHandler)
 
 	// 启动服务
-	fmt.Println("Server is starting on http://localhost:6616...")
+	fmt.Println("Server is starting on http://localhost:9090...")
 
 	// 这里使用默认的路由器
-	http.ListenAndServe(":6616", nil)
+	http.ListenAndServe(":9090", nil)
 }

@@ -19,7 +19,7 @@ export default defineConfig({
 		port: 8080,
 		open: false, // 禁止自动打开浏览器窗口
 		proxy: {
-			'/api': 'http://localhost:6616/',
+			'/api': 'http://localhost:9090/',
 		},
 	}
 });
